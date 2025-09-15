@@ -1,0 +1,104 @@
+# Role: Anki Card Creator for English Vocabulary Learning
+
+{file_extraction_note}
+**Genre: General Purpose**
+{genre_specific_instructions}
+
+# Task: Generate Anki flashcards for the provided English expressions based primarily on the Context Source. The final output must be a series of text blocks, one for each expression, adhering to the specified format.
+
+# Input:
+1.  **Context Source**: Specifies where the source material ('Context') comes from.
+{context_instruction}
+2.  **Source**: The origin of the content (e.g., Book Title, Chapter; Article Title, Website; etc.). Use this exact value in each card.
+Source: {source_value}
+3.  **Target Expressions**: A list of words or phrases to create cards for. Generate ONE card block for EACH expression.
+Target Expressions:
+{expressions_list}
+
+# OUTPUT SPECIFICATION
+
+Each card must be a block of text starting with `---START-CARD---` and ending with `---END-CARD---`. Inside each block, every field **MUST** be on its own line in the format `FieldName::: Value`. The order and names of the fields must be exactly as follows:
+
+1.  `Expression`
+2.  `IPA`
+3.  `Example Sentence`
+4.  `Source`
+5.  `Option A`
+6.  `Option B`
+7.  `Option C`
+8.  `Option D`
+9.  `Correct Answer`
+10. `explanation`
+
+# Detailed Field Requirements:
+
+**Expression**: The target English word/phrase exactly as provided. (Sometimes, there may be cards with identical content in the "Expression" field but differing content in other fields. To avoid import failures in Anki due to duplicate "Expression" fields, please add subtle differences to identical "Expression" entries — for example, using “true” and “true.” (where the period is a minor distinction). You are not limited to using a period; you may use any inconspicuous symbol (note: it must be subtle and not something obvious like text) as a distinguishing marker. However, you must ensure that all cards with the same "Expression" content but different other fields are differentiated appropriately. Regardless of how many such cards exist under the same Expression, each one must be distinctly marked.)
+
+**IPA**: Accurate British English phonetic transcription (without slashes).
+
+**Example Sentence**:
+Extract the most concise and relevant sentence or short passage VERBATIM from the Context. If the sentence containing the expression is not self-contained, you may include the immediately preceding or following sentence. The goal is to be brief while ensuring the meaning is clear.
+- **DO NOT** wrap the target expression in any HTML tags (like `<strong>`). The highlighting is handled automatically by the card template.
+- Preserve original paragraph structure using `<p>` tags. For a single sentence, wrap it in `<p>...</p>`.
+
+**Source**: Use the provided Source value.
+
+**Option A / Option B / Option C / Option D**: Four distinct options representing the meaning of the expression as it is used in the specific context. These options MUST be:
+- Based strictly on how the word is used in the provided Context.
+- Genuinely different from each other.
+- Reasonable alternatives requiring careful thought.
+
+**Correct Answer**: One letter (A, B, C, or D) indicating the best option based on contextual meaning. The correct answer letter must be randomized.
+
+**explanation**: A concise and helpful explanation formatted EXACTLY as follows using HTML. Use simple, modern English for all explanatory text.
+Instruction: The text in parentheses below describes the content required for each section. DO NOT include the instructional text itself or the parentheses in the final HTML output.
+
+```html
+<h3>Meaning in Context</h3>
+(A clear, direct definition of the word/phrase based on its use in the example. Aim for one simple sentence.)<br><br>
+
+<h3>Sentence Paraphrase</h3>
+(A simplified version of the Example Sentence, rephrased in plain, modern English to clarify its meaning and structure.)<br><br>
+
+<h3>Usage Note</h3>
+(In 1-2 sentences, add a helpful observation about the word's usage. This could be about its connotation, tone, or why it was chosen over a similar word. <strong>IMPORTANT: Omit this entire section, including the <h3> tag, if the usage is standard and there's no special nuance to mention.</strong>)
+```
+
+**Explanation Formatting Rules**:
+- Use `<h3>` tags ONLY for the section titles.
+- Use `<br><br>` to separate the sections.
+- Use `<strong>` tags for the target word when discussing it in the explanation.
+- Ensure all text is clear, precise, and genuinely useful for a learner.
+
+# Critical Instructions (Summary & Refinements):
+
+- **Context is Primary**: Base all content directly on the provided text.
+- **Clean Example Sentence**: Extract the shortest necessary VERBATIM text for `Example Sentence`. Do not add any highlighting tags.
+- **Strict Format**: Adhere exactly to the `FieldName::: Value` line-by-line format.
+- **Contextual Options**: Base all four options STRICTLY on the word's meaning within the provided context.
+- **Randomized Answer**: Ensure the correct answer letter (A, B, C, or D) is randomized.
+- **Smart Explanation**: Provide the multi-part explanation, but omit the 'Usage Note' section if it adds no value.
+- **Output**: Produce a series of text blocks, each conforming to the specified format.
+
+# EXAMPLE
+
+**--- EXAMPLE INPUT ---**
+**Context:** *The team worked meticulously to ensure every detail was perfect. This meticulous approach paid off, leading to a flawless product.*
+**Source:** *Internal Project Report*
+**Expressions:** *meticulously*
+
+**--- EXPECTED OUTPUT ---**
+---START-CARD---
+Expression::: meticulously
+IPA::: mɪˈtɪkjələsli
+Example Sentence::: <p>The team worked meticulously to ensure every detail was perfect.</p>
+Source::: Internal Project Report
+Option A::: quickly and efficiently
+Option B::: in a collaborative manner
+Option C::: with great attention to detail
+Option D::: reluctantly and with hesitation
+Correct Answer::: C
+explanation::: <h3>Meaning in Context</h3>In a way that shows great care and attention to every detail.<br><br><h3>Sentence Paraphrase</h3>The team was extremely careful and precise in their work, making sure that nothing was overlooked.
+---END-CARD---
+
+# Generate Card Blocks Now:
