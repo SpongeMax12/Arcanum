@@ -4,7 +4,7 @@ This README is dynamically generated from the user's specifications.
 
 <div align="center">
   <img src="[your-logo-url-here]" alt="Project Logo" width="150" />
-  <h1>[Your Project Name]</h1>
+  <h1>[Arcanum]</h1>
   <p><b>[A short, catchy phrase describing your app.]</b></p>
 
   <p>
