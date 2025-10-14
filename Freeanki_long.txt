@@ -2,7 +2,21 @@
 
 {file_extraction_note}
 **Genre: General Purpose**
-{genre_specific_instructions}
+
+# Genre-Specific Instructions
+*This section provides rules for specific types of content. These rules supplement or override the general instructions below.*
+
+**If the Context is a Play/Drama:**
+The goal is to make the `Example Sentence` visually resemble the format of a play script on a page, using HTML for rendering.
+
+1.  **If the Speaker's Name is Included in the Source Text:**
+    *   Replicate the formatting exactly as it appears in the source. Use HTML tags like `<b>` or `<i>` to match the typography of the speaker's name (e.g., bold, italics). Preserve line breaks using `<br>`.
+    *   Example: If the source shows the speaker "ARTHUR" in bold, the output should be `<p><b>ARTHUR:</b><br>It is not a question of what you believe, but what you can prove.</p>`
+
+2.  **If the Speaker's Name is NOT Included in the Source Text:**
+    *   Extract the dialogue verbatim.
+    *   At the end of the dialogue, inside the final `<p>` tag, add the speaker's name in parentheses. The name inside the parentheses should be formatted to match how it typically appears in the source (e.g., using `<b>` or `<i>`).
+    *   Example: `<p>My words fly up, my thoughts remain below. (<b>CLAUDIUS</b>)</p>`
 
 # Task: Generate Anki flashcards for the provided English expressions based primarily on the Context Source. The final output must be a series of text blocks, one for each expression, adhering to the specified format.
 
@@ -37,9 +51,10 @@ Each card must be a block of text starting with `---START-CARD---` and ending wi
 **IPA**: Accurate British English phonetic transcription (without slashes).
 
 **Example Sentence**:
-Extract the most concise and relevant sentence or short passage VERBATIM from the Context. If the sentence containing the expression is not self-contained, you may include the immediately preceding or following sentence. The goal is to be brief while ensuring the meaning is clear.
+Extract a passage that provides **sufficient context** for the expression's meaning to be understood clearly without external information. The goal is to create a self-contained mini-context. This often requires including the sentence containing the expression along with the immediately preceding and/or following sentences. The passage must be long enough to paint a clear picture of the situation, but not so long that it becomes overwhelming. The key is **contextual richness**, not just a single, isolated sentence.
 - **DO NOT** wrap the target expression in any HTML tags (like `<strong>`). The highlighting is handled automatically by the card template.
-- Preserve original paragraph structure using `<p>` tags. For a single sentence, wrap it in `<p>...</p>`.
+- Preserve original paragraph structure using `<p>` tags.
+- For specific genres like plays, follow the rules in the **Genre-Specific Instructions** section above.
 
 **Source**: Use the provided Source value.
 
@@ -73,32 +88,74 @@ Instruction: The text in parentheses below describes the content required for ea
 # Critical Instructions (Summary & Refinements):
 
 - **Context is Primary**: Base all content directly on the provided text.
-- **Clean Example Sentence**: Extract the shortest necessary VERBATIM text for `Example Sentence`. Do not add any highlighting tags.
+- **Contextually Rich Example**: Extract a VERBATIM passage that offers a clear, self-contained context for the expression. Do not add any highlighting tags.
 - **Strict Format**: Adhere exactly to the `FieldName::: Value` line-by-line format.
 - **Contextual Options**: Base all four options STRICTLY on the word's meaning within the provided context.
 - **Randomized Answer**: Ensure the correct answer letter (A, B, C, or D) is randomized.
 - **Smart Explanation**: Provide the multi-part explanation, but omit the 'Usage Note' section if it adds no value.
 - **Output**: Produce a series of text blocks, each conforming to the specified format.
 
-# EXAMPLE
+# EXAMPLES
 
-**--- EXAMPLE INPUT ---**
-**Context:** *The team worked meticulously to ensure every detail was perfect. This meticulous approach paid off, leading to a flawless product.*
+**--- EXAMPLE 1: Standard Word ---**
+**Context:** *The project deadline was looming, and the stakes were high. The team worked meticulously to ensure every detail was perfect. This meticulous approach paid off, leading to a flawless product that impressed the client.*
 **Source:** *Internal Project Report*
 **Expressions:** *meticulously*
 
-**--- EXPECTED OUTPUT ---**
+**--- EXPECTED OUTPUT FOR EXAMPLE 1 ---**
 ---START-CARD---
 Expression::: meticulously
 IPA::: mɪˈtɪkjələsli
-Example Sentence::: <p>The team worked meticulously to ensure every detail was perfect.</p>
+Example Sentence::: <p>The project deadline was looming, and the stakes were high. The team worked meticulously to ensure every detail was perfect. This meticulous approach paid off, leading to a flawless product that impressed the client.</p>
 Source::: Internal Project Report
 Option A::: quickly and efficiently
 Option B::: in a collaborative manner
 Option C::: with great attention to detail
-Option D::: reluctantly and with hesitation
+Option D::: under constant pressure
 Correct Answer::: C
-explanation::: <h3>Meaning in Context</h3>In a way that shows great care and attention to every detail.<br><br><h3>Sentence Paraphrase</h3>The team was extremely careful and precise in their work, making sure that nothing was overlooked.
+explanation::: <h3>Meaning in Context</h3>In a way that shows great care and attention to every detail.<br><br><h3>Sentence Paraphrase</h3>Because the deadline was near and the project was very important, the team was extremely careful and precise in their work to make sure nothing was overlooked. Their careful method resulted in a perfect product.
+---END-CARD---
+
+**--- EXAMPLE 2: Play/Drama (Speaker Included) ---**
+**Context:** *(A scene from a play script. The speaker's name, 'LADY ELARA', is shown in bold.)*
+**THOMAS:** I assure you, my lady, I have no knowledge of this affair. My loyalty has never wavered.
+**LADY ELARA:**
+Do not feign ignorance with me, Thomas. I saw the letter. Your duplicity is as clear as the scar on your cheek.
+**Source:** *The Serpent's Kiss, Act II, Scene 3*
+**Expressions:** *duplicity*
+
+**--- EXPECTED OUTPUT FOR EXAMPLE 2 ---**
+---START-CARD---
+Expression::: duplicity
+IPA::: djuːˈplɪsəti
+Example Sentence::: <p><b>THOMAS:</b> I assure you, my lady, I have no knowledge of this affair.<br><b>LADY ELARA:</b> Do not feign ignorance with me, Thomas. I saw the letter. Your duplicity is as clear as the scar on your cheek.</p>
+Source::: The Serpent's Kiss, Act II, Scene 3
+Option A::: courage
+Option B::: deceitfulness
+Option C::: confusion
+Option D::: ambition
+Correct Answer::: B
+explanation::: <h3>Meaning in Context</h3>Dishonest behaviour that is intended to trick someone.<br><br><h3>Sentence Paraphrase</h3>After Thomas claimed he knew nothing, Lady Elara told him to stop pretending because she had proof (a letter) and his deceit was obvious to her.
+---END-CARD---
+
+**--- EXAMPLE 3: Play/Drama (Speaker NOT Included) ---**
+**Context:** *(From a play script. The following lines are spoken by 'PROCTOR'.)*
+I have known her, sir. I have known her. A man may think God sleeps, but God sees everything. I have made a bell of my honour! I have rung the doom of my good name—you will believe me, Mr. Danforth!
+**Source:** *The Crucible, Act III*
+**Expressions:** *doom*
+
+**--- EXPECTED OUTPUT FOR EXAMPLE 3 ---**
+---START-CARD---
+Expression::: doom
+IPA::: duːm
+Example Sentence::: <p>I have known her, sir. I have known her. ... I have made a bell of my honour! I have rung the doom of my good name—you will believe me, Mr. Danforth! (<b>PROCTOR</b>)</p>
+Source::: The Crucible, Act III
+Option A::: the successful future
+Option B::: a terrible fate or ruin
+Option C::: a loud and clear sound
+Option D::: a public announcement
+Correct Answer::: B
+explanation::: <h3>Meaning in Context</h3>A terrible and unavoidable fate, such as death or ruin.<br><br><h3>Sentence Paraphrase</h3>After confessing his affair, Proctor exclaims that by revealing this truth, he has publicly and irreversibly caused the ruin of his own reputation.<br><br><h3>Usage Note</h3>While <strong>doom</strong> often refers to death or destruction, here it is used more metaphorically to mean the complete and final ruin of something abstract, like a reputation.
 ---END-CARD---
 
 # Generate Card Blocks Now:

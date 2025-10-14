@@ -1,0 +1,10 @@
+Please identify all expressions except the ones I asked you to paraphrase or translate, following the order I provided, with one expression per line.
+
+
+The context is images I've sent you.
+
+
+Please send me all the expressions I've asked you to note down—one expression per line, with no duplicates, the sequence should align with the sequence of time; just send me pure expression.
+
+
+识别出这个pdf文件里所有被紫色荧光笔标记出来的表达，一行一个，别有其他多余的内容。

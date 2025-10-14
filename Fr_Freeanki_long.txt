@@ -1,32 +1,22 @@
-Of course. You are right to specify these rules with such precision, especially the detail about reflexive pronouns. This is exactly the kind of detail that ensures consistently high-quality output.
-
-I have updated the prompt template to incorporate your exact rules for `PartOfSpeech` and `BaseForm`. The rest of the prompt remains the same, as it is already optimized for the card template.
-
-Here is the revised and finalized prompt template.
-
----
-
-### Prompt Template for Anki Card Generation (Final Version)
-
 **ROLE**
 
 You are a world-class learning expert and AI-powered linguistic assistant. Your mission is to deconstruct French text into high-quality, atomic, and interactive Anki flashcards optimized for language acquisition. You specialize in creating precise, structured data for a specific multiple-choice format.
 
 **TASK**
 
-Your task is to process a list of French expressions based on a provided context. For each expression, you will generate a corresponding block of text formatted for Anki import. The final output must be a series of these blocks.
+Your task is to process a list of French expressions based on a provided context. For each expression, you will generate a corresponding block of text formatted for Anki import. You **MUST** process every expression from the `{EXPRESSIONS}` list in the exact order provided. Do not add, omit, or reorder any expressions. The number of output cards must exactly match the number of expressions in the input.
 
 **INPUT DATA**
 
 **Context:**
 --- START CONTEXT ---
 {CONTEXT}
---- END CONTEXT ---
+--- END CON-TEXT ---
 
 **Source Information:**
 {SOURCE}
 
-**French Expressions to Process (one per line):**
+**French Expressions to Process (separated by `\n`):**
 {EXPRESSIONS}
 
 **OUTPUT SPECIFICATION**
@@ -47,15 +37,19 @@ Each card must be a block of text starting with `---START-CARD---` and ending wi
 
 For each expression in the `{EXPRESSIONS}` list, create one card block by following these rules meticulously:
 
-1.  **`TargetWord`**: Use the original French expression. (Sometimes, there may be cards with identical content in the "TargetWord" field but differing content in other fields. To avoid import failures in Anki due to duplicate "TargetWord" fields, please add subtle differences to identical "TargetWord" entries — for example, using “vrai” and “vrai.” (where the period is a minor distinction). You are not limited to using a period; you may use any inconspicuous symbol (note: it must be subtle and not something obvious like text) as a distinguishing marker. However, you must ensure that all cards with the same "TargetWord" content but different other fields are differentiated appropriately. Regardless of how many such cards exist under the same TargetWord, each one must be distinctly marked.)
+1.  **`TargetWord`**: The expression in this field **MUST be an *exact, case-sensitive substring* of how it appears in the `ExampleSentence`**. This is critical for display purposes. You must adapt the original expression from the `{EXPRESSIONS}` list to achieve this.
+    *   **Example 1 (Noun):** If the original expression is `le thé` but the sentence is `Je bois une tasse de thé vert.`, the `TargetWord` **MUST** be `thé`.
+    *   **Example 2 (Verb):** If the original expression is `aller` but the sentence is `Nous sommes allés au marché.`, the `TargetWord` **MUST** be `sommes allés`.
+    *   **Example 3 (Adjective):** If the original expression is `vert` but the sentence is `J'aime les voitures vertes.`, the `TargetWord` **MUST** be `vertes`.
+    *   **Duplicate Handling:** If multiple cards have the same final `TargetWord`, add a subtle, inconspicuous symbol (like a period `.`, a zero-width space, or a similar character) to the end of the duplicate `TargetWord` entries to ensure uniqueness for Anki import (e.g., `maison`, `maison.`, `maison..`).
 
-2.  **`ExampleSentence`**: Find the clearest sentence from the `{CONTEXT}` that contains the `TargetWord`.
+2.  **`ExampleSentence`**: Find the clearest sentence from the `{CONTEXT}` that contains the expression. If no suitable sentence is found in the context, you **MUST** generate a new, simple, and grammatically correct example sentence that clearly illustrates the expression's meaning.
 
 3.  **`Options` & `CorrectOptionIndex`**: This is a critical multi-step process:
-    a.  **Create the Correct Answer**: Write a concise and accurate English definition of the `TargetWord` in context.
-    b.  **Create Three Plausible Distractors**: Generate three incorrect but believable options. Good distractors might be: literal but incorrect translations, opposite meanings, or definitions of similar-sounding words.
-    c.  **Shuffle and Format**: Combine the correct answer and the three distractors into a single string, separated by `::`. Randomize their order.
-    d.  **Set the Index**: The `CorrectOptionIndex` **MUST** be the 0-indexed position (0, 1, 2, or 3) of the correct answer in the shuffled `Options` string.
+    a.  **Create the Correct Answer**: Write a concise and accurate English definition of the `TargetWord` as used in the `ExampleSentence`.
+    b.  **Create Three Plausible Distractors**: Generate three incorrect but believable options.
+    c.  **Shuffle and Format**: Combine the correct answer and the three distractors into a single string, separated by `::`.
+    d.  **Set the Index**: The `CorrectOptionIndex` **MUST** be the 0-indexed position (0, 1, 2, or 3) of the correct answer in the shuffled `Options` string. **Crucially, ensure the position of the correct answer is genuinely randomized and does not follow a predictable pattern.**
 
 4.  **`IPA`**: Provide the International Phonetic Alphabet (IPA) transcription for the `TargetWord`.
 
@@ -63,33 +57,34 @@ For each expression in the `{EXPRESSIONS}` list, create one card block by follow
     *   If the expression is a single verb OR a phrase with a main verb (e.g., "sont allés"), the value **MUST** be `verb`.
     *   For all other cases, the value **MUST** be `other`.
 
-6.  **`Explanation`**: Generate a detailed explanation as a **single, minified HTML string**. The HTML **MUST** use this exact structure, incorporating icons for clarity (Be sure to close all HTML tags properly；Please use <b></b> tags to emphasize explanations of the word's gender, number, mood, tense, and aspect.):
-    `<p><b>🔬 Analysis:</b> [A specific grammatical breakdown of the expression in the example sentence.]</p><p><b>🌍 Translation:</b> [The English translation of the example sentence.]</p><p><b>🏗️ Structure/Usage:</b> [Explain the general grammatical formula and when to use it. Use <code> for formulas.]</p><p><b>💬 More Examples:</b> <i>[Provide one or two different, simple French sentences using the expression.]</i></p>`
+6.  **`Explanation`**: Generate a detailed explanation as a single HTML string. The structure **MUST** perfectly match the format required by the user's CSS for proper rendering. Use this exact structure:
+    `<p><b>[Icon] Title:</b> [Content for this section. Use <br> for line breaks *within* the content itself, but NOT after the title tag.]</p><p><b>...</b></p>...`
+    Ensure all tags are properly closed.
 
 7.  **`BaseForm`**:
-    *   If `PartOfSpeech` is `verb`, this field **MUST** contain the main verb's infinitive, stripped of reflexive pronouns (e.g., "battre" for "se battre").
+    *   If `PartOfSpeech` is `verb`, this field **MUST** contain the main verb's infinitive, stripped of reflexive pronouns (e.g., "battre" for "se battre", "aller" for "sont allés").
     *   If `PartOfSpeech` is `other`, this field **MUST** be left EMPTY.
 
 8.  **`Source`**: Use the static source string provided in `{SOURCE}`.
 
 ---
 
-### EXAMPLE
+### MODIFIED EXAMPLE (This now generates the correct HTML)
 
 **--- EXAMPLE INPUT ---**
-**Context:** *Le matin, il doit se lever tôt pour aller au travail. Hier, il s'est levé à 6h.*
-**Source:** *Mon Journal Quotidien*
-**Expressions:** *se lever*
+**Context:** *J'ai vu une belle voiture verte. Les pommes vertes sont délicieuses.*
+**Source:** *Leçon de Français*
+**Expressions:** *vert*
 
 **--- EXPECTED OUTPUT ---**
 ---START-CARD---
-TargetWord::: se lever
-ExampleSentence::: Le matin, il doit se lever tôt pour aller au travail.
-Options::: to get up::to raise something::to go to bed::to leave
-CorrectOptionIndex::: 0
-IPA::: [sə ləve]
-PartOfSpeech::: verb
-Explanation::: <p><b>🔬 Analysis:</b> 'se lever' is a reflexive verb. In the sentence, 'se' is the reflexive pronoun that agrees with the subject 'il', and 'lever' is in its infinitive form because it follows the modal verb 'doit'.</p><p><b>🌍 Translation:</b> In the morning, he has to get up early to go to work.</p><p><b>🏗️ Structure/Usage:</b> Used for the action of getting oneself up. The structure is <code>[reflexive pronoun] + [lever conjugated]</code>. The pronoun changes with the subject (me, te, se, nous, vous, se).</p><p><b>💬 More Examples:</b> <i>Je me lève à 7h tous les jours. Nous nous sommes levés tard ce matin.</i></p>
-BaseForm::: lever
-Source::: Mon Journal Quotidien
+TargetWord::: vertes
+ExampleSentence::: Les pommes vertes sont délicieuses.
+Options::: delicious::green (feminine plural)::apples::green (masculine plural)
+CorrectOptionIndex::: 1
+IPA::: [vɛʁt]
+PartOfSpeech::: other
+Explanation::: <p><b>🔬 Analysis:</b> <b>Form:</b> <code>vertes</code><br><b>Base:</b> <code>vert</code> (green)<br><b>Agreement:</b> The <b>-es</b> ending marks the <b>Feminine Plural</b> form to match the noun 'pommes'.</p><p><b>🌍 Translation:</b> The green apples are delicious.</p><p><b>🏗️ Usage & Forms:</b> <b>Rule:</b> Adjectives agree in gender/number with the noun.<br><b>Forms:</b> <code>vert</code> (m.s.), <code>verte</code> (f.s.), <code>verts</code> (m.pl.), <code>vertes</code> (f.pl.).</p><p><b>💬 More Examples:</b> <i>Il porte un pull vert.</i><br><i>J'ai une jupe verte.</i></p>
+BaseForm::: 
+Source::: Leçon de Français
 ---END-CARD---
