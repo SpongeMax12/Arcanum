@@ -290,35 +290,50 @@ class AnkiImporterTab(ttk.Frame):
             self.log_status(f"Processing batch {i//batch_size + 1}/{(len(parsed_cards) + batch_size - 1)//batch_size} ({len(batch)} notes)...")
             
             try:
+                # First, try to add the entire batch at once.
                 result = self.invoke_anki_connect('addNotes', notes=notes_to_add)
-                
-                if result is not None:
+
+                # The `addNotes` command is transactional. If one card fails, it returns a list of `None`.
+                # If the result is not None and the first element is not None, the whole batch was successful.
+                if result and result[0] is not None:
+                    total_successful += len(batch)
+                    self.log_status(f"  All {len(batch)} notes in batch added successfully.")
+                else:
+                    # The batch failed. Fall back to adding notes one by one.
+                    self.log_status("  Batch import failed. Retrying notes individually...")
                     batch_successful = 0
                     batch_failed = 0
                     
-                    for k, note_id in enumerate(result):
-                        if note_id is not None:
-                            batch_successful += 1
-                        else:
+                    for k, note_to_add in enumerate(notes_to_add):
+                        try:
+                            # Try adding a single note.
+                            single_result = self.invoke_anki_connect('addNote', note=note_to_add)
+                            if single_result:
+                                batch_successful += 1
+                            else:
+                                # This path is unlikely if invoke_anki_connect raises an exception on error, but is here for safety.
+                                batch_failed += 1
+                                first_field_name = self.current_note_fields[0]
+                                first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
+                                self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'")
+
+                        except Exception as single_error:
+                            # This is the expected path for a single note failure.
                             batch_failed += 1
-                            try:
-                                single_note_result = self.invoke_anki_connect('addNote', note=notes_to_add[k])
-                                if single_note_result:
-                                    self.log_status(f"  Note {i+k+1} added successfully on retry")
-                                    batch_successful += 1
-                                    batch_failed -= 1
-                            except Exception as single_error:
-                                self.log_status(f"  Note {i+k+1} failed: {str(single_error)}")
+                            first_field_name = self.current_note_fields[0]
+                            first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
+                            # Clean up the error message from AnkiConnect if possible
+                            error_message = str(single_error)
+                            if "duplicate" in error_message.lower():
+                                error_message = "Duplicate card."
+                            self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'. Reason: {error_message}")
                     
                     total_successful += batch_successful
                     total_failed += batch_failed
-                    self.log_status(f"  Batch result: {batch_successful} successful, {batch_failed} failed")
-                else:
-                    total_failed += len(batch)
-                    self.log_status(f"  Batch failed completely - connection issue")
-                    
+                    self.log_status(f"  Individual retry result: {batch_successful} successful, {batch_failed} failed.")
+
             except Exception as batch_error:
-                self.log_status(f"  Batch processing error: {str(batch_error)}")
+                self.log_status(f"  A critical error occurred during batch processing: {str(batch_error)}")
                 total_failed += len(batch)
 
         self.log_status(f"\n--- Import Complete ---")
