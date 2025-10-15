@@ -1,0 +1,24 @@
+---START-CARD---
+Expression::: distinct
+IPA::: dɪˈstɪŋkt
+Example Sentence::: <p>The author is exploring what makes literature distinct from other forms of writing.</p>
+Source::: English Learning Dialogue Summary
+Option A::: similar in structure
+Option B::: clearly different or separate
+Option C::: emotionally impactful
+Option D::: difficult to define
+Correct Answer::: B
+explanation::: <h3>Meaning in Context</h3>Clearly different and separate from something else.<br><br><h3>Sentence Paraphrase</h3>The author is investigating the specific qualities that make literature a unique and separate category when compared to other types of writing.<br><br><h3>中文翻译</h3><b>表达：</b>明显不同的；有区别的。<br><b>例句：</b>作者正在探讨是什么让文学与其他写作形式有所区别。
+---END--CARD---
+---START-CARD---
+Expression::: conveying information
+IPA::: kənˈveɪɪŋ ˌɪnfəˈmeɪʃən
+Example Sentence::: <p>literature uses language in a way that goes beyond just conveying information.</p>
+Source::: English Learning Dialogue Summary
+Option A::: communicating facts or knowledge
+Option B::: creating confusion
+Option C::: hiding the true meaning
+Option D::: telling a simple story
+Correct Answer::: A
+explanation::: <h3>Meaning in Context</h3>To communicate or transmit facts, knowledge, or data.<br><br><h3>Sentence Paraphrase</h3>Literature employs language for more than just communicating facts; it serves other purposes as well.<br><br><h3>中文翻译</h3><b>表达：</b>传达信息；传递知识或事实。<br><b>例句：</b>文学使用的语言方式超越了仅仅传达信息。
+---END-CARD---
