@@ -65,24 +65,29 @@ Extract a passage that provides **sufficient context** for the expression's mean
 
 **Correct Answer**: One letter (A, B, C, or D) indicating the best option based on contextual meaning. The correct answer letter must be randomized.
 
-**explanation**: A concise and helpful explanation formatted EXACTLY as follows using HTML. Use simple, modern English for all explanatory text.
+**explanation**: A concise and helpful explanation formatted EXACTLY as follows using HTML. Use simple, modern English for the English sections and natural, modern Chinese for the translation section.
 Instruction: The text in parentheses below describes the content required for each section. DO NOT include the instructional text itself or the parentheses in the final HTML output.
 
 ```html
 <h3>Meaning in Context</h3>
-(A clear, direct definition of the word/phrase based on its use in the example. Aim for one simple sentence.)<br><br>
+(A clear, direct definition of the word/phrase based on its use in the example. Aim for one simple sentence in English.)<br><br>
 
 <h3>Sentence Paraphrase</h3>
 (A simplified version of the Example Sentence, rephrased in plain, modern English to clarify its meaning and structure.)<br><br>
 
 <h3>Usage Note</h3>
-(In 1-2 sentences, add a helpful observation about the word's usage. This could be about its connotation, tone, or why it was chosen over a similar word. <strong>IMPORTANT: Omit this entire section, including the <h3> tag, if the usage is standard and there's no special nuance to mention.</strong>)
+(In 1-2 sentences, add a helpful observation about the word's usage in English. This could be about its connotation, tone, or why it was chosen over a similar word. <strong>IMPORTANT: Omit this entire section, including the <h3> tag, if the usage is standard and there's no special nuance to mention.</strong>)<br><br>
+
+<h3>中文翻译</h3>
+<b>表达：</b> (Translate the "Meaning in Context" into natural and clear Chinese.)<br>
+<b>例句：</b> (Translate the original "Example Sentence" into natural and fluent Chinese. The goal is to convey the same meaning and context, not a word-for-word literal translation.)
 ```
 
 **Explanation Formatting Rules**:
 - Use `<h3>` tags ONLY for the section titles.
-- Use `<br><br>` to separate the sections.
-- Use `<strong>` tags for the target word when discussing it in the explanation.
+- Use `<br><br>` to separate the main sections (Meaning, Paraphrase, Usage Note, 中文翻译).
+- For the `中文翻译` section, use `<b>` tags for "表达：" and "例句：", and a single `<br>` to separate them.
+- Use `<strong>` tags for the target word when discussing it in the English explanation sections.
 - Ensure all text is clear, precise, and genuinely useful for a learner.
 
 # Critical Instructions (Summary & Refinements):
@@ -113,7 +118,7 @@ Option B::: in a collaborative manner
 Option C::: with great attention to detail
 Option D::: under constant pressure
 Correct Answer::: C
-explanation::: <h3>Meaning in Context</h3>In a way that shows great care and attention to every detail.<br><br><h3>Sentence Paraphrase</h3>Because the deadline was near and the project was very important, the team was extremely careful and precise in their work to make sure nothing was overlooked. Their careful method resulted in a perfect product.
+explanation::: <h3>Meaning in Context</h3>In a way that shows great care and attention to every detail.<br><br><h3>Sentence Paraphrase</h3>Because the deadline was near and the project was very important, the team was extremely careful and precise in their work to make sure nothing was overlooked. Their careful method resulted in a perfect product.<br><br><h3>中文翻译</h3><b>表达：</b>以非常小心、注重每一个细节的方式；一丝不苟地。<br><b>例句：</b>项目截止日期迫在眉睫，风险也很高。团队一丝不苟地工作，以确保每个细节都完美无瑕。这种细致的方法取得了回报，最终打造出一款给客户留下深刻印象的完美产品。
 ---END-CARD---
 
 **--- EXAMPLE 2: Play/Drama (Speaker Included) ---**
@@ -135,7 +140,7 @@ Option B::: deceitfulness
 Option C::: confusion
 Option D::: ambition
 Correct Answer::: B
-explanation::: <h3>Meaning in Context</h3>Dishonest behaviour that is intended to trick someone.<br><br><h3>Sentence Paraphrase</h3>After Thomas claimed he knew nothing, Lady Elara told him to stop pretending because she had proof (a letter) and his deceit was obvious to her.
+explanation::: <h3>Meaning in Context</h3>Dishonest behaviour that is intended to trick someone.<br><br><h3>Sentence Paraphrase</h3>After Thomas claimed he knew nothing, Lady Elara told him to stop pretending because she had proof (a letter) and his deceit was obvious to her.<br><br><h3>中文翻译</h3><b>表达：</b>旨在欺骗某人的不诚实行为；口是心非，表里不一。<br><b>例句：</b><b>托马斯：</b>我向您保证，夫人，我对这件事一无所知。<br><b>埃拉拉夫人：</b>别跟我装糊涂，托马斯。我看到了那封信。你的口是心非就像你脸上的伤疤一样清晰。
 ---END-CARD---
 
 **--- EXAMPLE 3: Play/Drama (Speaker NOT Included) ---**
@@ -155,7 +160,7 @@ Option B::: a terrible fate or ruin
 Option C::: a loud and clear sound
 Option D::: a public announcement
 Correct Answer::: B
-explanation::: <h3>Meaning in Context</h3>A terrible and unavoidable fate, such as death or ruin.<br><br><h3>Sentence Paraphrase</h3>After confessing his affair, Proctor exclaims that by revealing this truth, he has publicly and irreversibly caused the ruin of his own reputation.<br><br><h3>Usage Note</h3>While <strong>doom</strong> often refers to death or destruction, here it is used more metaphorically to mean the complete and final ruin of something abstract, like a reputation.
+explanation::: <h3>Meaning in Context</h3>A terrible and unavoidable fate, such as death or ruin.<br><br><h3>Sentence Paraphrase</h3>After confessing his affair, Proctor exclaims that by revealing this truth, he has publicly and irreversibly caused the ruin of his own reputation.<br><br><h3>Usage Note</h3>While <strong>doom</strong> often refers to death or destruction, here it is used more metaphorically to mean the complete and final ruin of something abstract, like a reputation.<br><br><h3>中文翻译</h3><b>表达：</b>可怕且无法避免的命运，如死亡或毁灭。<br><b>例句：</b>我认识她，先生。我认识她。……我把我自己的荣誉变成了一口钟！我敲响了我好名声的丧钟——你会相信我的，丹福斯先生！（<b>普罗克特</b>）
 ---END-CARD---
 
 # Generate Card Blocks Now:

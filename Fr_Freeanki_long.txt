@@ -57,9 +57,15 @@ For each expression in the `{EXPRESSIONS}` list, create one card block by follow
     *   If the expression is a single verb OR a phrase with a main verb (e.g., "sont allés"), the value **MUST** be `verb`.
     *   For all other cases, the value **MUST** be `other`.
 
-6.  **`Explanation`**: Generate a detailed explanation as a single HTML string. The structure **MUST** perfectly match the format required by the user's CSS for proper rendering. Use this exact structure:
-    `<p><b>[Icon] Title:</b> [Content for this section. Use <br> for line breaks *within* the content itself, but NOT after the title tag.]</p><p><b>...</b></p>...`
-    Ensure all tags are properly closed.
+6.  **`Explanation`**: Generate a detailed explanation as a single HTML string. The structure **MUST** perfectly match the format required by the user's CSS for proper rendering. Use the following exact structure, including the new **`📖 中文翻译`** module. Ensure all tags are properly closed.
+    *   **Structure Template:**
+        `<p><b>🔬 Analysis:</b> [Content]</p><p><b>🌍 Translation:</b> [Content]</p><p><b>📖 中文翻译:</b> <b>表达:</b> [Chinese translation of TargetWord]<br><b>例句:</b> [Chinese translation of ExampleSentence]</p><p><b>🏗️ Usage & Forms:</b> [Content]</p><p><b>💬 More Examples:</b> [Content]</p>`
+    *   **Module Details:**
+        *   **`🔬 Analysis:`**: Analyze the word's form, base, and any grammatical agreements (e.g., gender, number, tense).
+        *   **`🌍 Translation:`**: Provide a direct English translation of the `ExampleSentence`.
+        *   **`📖 中文翻译:`**: This is the new module. It **MUST** contain two parts: a translation of the `TargetWord` (表达) and a translation of the full `ExampleSentence` (例句), separated by a `<br>` tag.
+        *   **`🏗️ Usage & Forms:`**: Explain the grammatical rule or usage context. Show other forms if applicable (e.g., masculine/feminine, singular/plural).
+        *   **`💬 More Examples:`**: Provide one or two additional, distinct example sentences in French, enclosed in `<i>` tags.
 
 7.  **`BaseForm`**:
     *   If `PartOfSpeech` is `verb`, this field **MUST** contain the main verb's infinitive, stripped of reflexive pronouns (e.g., "battre" for "se battre", "aller" for "sont allés").
@@ -69,7 +75,7 @@ For each expression in the `{EXPRESSIONS}` list, create one card block by follow
 
 ---
 
-### MODIFIED EXAMPLE (This now generates the correct HTML)
+### MODIFIED EXAMPLE (This now generates the correct HTML with the Chinese module)
 
 **--- EXAMPLE INPUT ---**
 **Context:** *J'ai vu une belle voiture verte. Les pommes vertes sont délicieuses.*
@@ -84,7 +90,7 @@ Options::: delicious::green (feminine plural)::apples::green (masculine plural)
 CorrectOptionIndex::: 1
 IPA::: [vɛʁt]
 PartOfSpeech::: other
-Explanation::: <p><b>🔬 Analysis:</b> <b>Form:</b> <code>vertes</code><br><b>Base:</b> <code>vert</code> (green)<br><b>Agreement:</b> The <b>-es</b> ending marks the <b>Feminine Plural</b> form to match the noun 'pommes'.</p><p><b>🌍 Translation:</b> The green apples are delicious.</p><p><b>🏗️ Usage & Forms:</b> <b>Rule:</b> Adjectives agree in gender/number with the noun.<br><b>Forms:</b> <code>vert</code> (m.s.), <code>verte</code> (f.s.), <code>verts</code> (m.pl.), <code>vertes</code> (f.pl.).</p><p><b>💬 More Examples:</b> <i>Il porte un pull vert.</i><br><i>J'ai une jupe verte.</i></p>
+Explanation::: <p><b>🔬 Analysis:</b> <b>Form:</b> <code>vertes</code><br><b>Base:</b> <code>vert</code> (green)<br><b>Agreement:</b> The <b>-es</b> ending marks the <b>Feminine Plural</b> form to match the noun 'pommes'.</p><p><b>🌍 Translation:</b> The green apples are delicious.</p><p><b>📖 中文翻译:</b> <b>表达:</b> 绿色的 (阴性复数)<br><b>例句:</b> 绿色的苹果很好吃。</p><p><b>🏗️ Usage & Forms:</b> <b>Rule:</b> Adjectives agree in gender/number with the noun.<br><b>Forms:</b> <code>vert</code> (m.s.), <code>verte</code> (f.s.), <code>verts</code> (m.pl.), <code>vertes</code> (f.pl.).</p><p><b>💬 More Examples:</b> <i>Il porte un pull vert.</i><br><i>J'ai une jupe verte.</i></p>
 BaseForm::: 
 Source::: Leçon de Français
 ---END-CARD---

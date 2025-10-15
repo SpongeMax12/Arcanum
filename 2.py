@@ -236,8 +236,21 @@ class AnkiImporterTab(ttk.Frame):
         self.log_status("\n--- Starting Import Process ---")
         try:
             with open(file, 'r', encoding='utf-8') as f: content = f.read()
-            # 确保您的Prompt模板使用 ---END-CARD--- 作为分隔符
-            card_blocks = [block for block in content.strip().split('---END-CARD---') if block.strip()]
+
+            # Split by the start delimiter, which is more reliable
+            raw_blocks = content.split('---START-CARD---')
+
+            card_blocks = []
+            for block in raw_blocks:
+                if not block.strip():
+                    continue
+                # Truncate at the end delimiter, allowing for minor typos
+                end_match = re.search(r'---END-?CARD---', block, re.IGNORECASE)
+                if end_match:
+                    card_blocks.append(block[:end_match.start()].strip())
+                else:
+                    card_blocks.append(block.strip()) # Keep the block if no end delimiter is found
+
             pattern_parts = [re.escape(field) + r':::(.*?)' for field in self.current_note_fields]
             pattern_str = "".join(pattern_parts[:-1]) + re.escape(self.current_note_fields[-1]) + r':::(.*)'
             card_pattern = re.compile(pattern_str, re.DOTALL)
