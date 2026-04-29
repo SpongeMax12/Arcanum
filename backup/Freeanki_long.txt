@@ -18,18 +18,6 @@ The goal is to make the `Example Sentence` visually resemble the format of a pla
     *   At the end of the dialogue, inside the final `<p>` tag, add the speaker's name in parentheses. The name inside the parentheses should be formatted to match how it typically appears in the source (e.g., using `<b>` or `<i>`).
     *   Example: `<p>My words fly up, my thoughts remain below. (<b>CLAUDIUS</b>)</p>`
 
-# Special Expression Formats
-*This section provides rules for expressions that follow non-standard patterns.*
-
-**Handling Discontinuous Phrases (e.g., `verb ... preposition`)**
-If a `Target Expression` contains `...` (e.g., `credited ... with`), it represents a phrasal structure where other words are expected to appear in the middle.
-
-1.  **`Expression` Field:** The `Expression` field's value must include the `...` exactly as provided. For the example `credited ... with`, the output must be `Expression::: credited ... with`.
-
-2.  **`Example Sentence` Field:** When extracting the `Example Sentence`, you must find a sentence from the source that contains **both parts** of the expression (e.g., both 'credited' and 'with') and includes the words that appear between them.
-
-3.  **`Options` & `explanation` Fields:** The definitions, options, and paraphrases must explain the meaning of the **entire phrasal pattern** (e.g., the meaning of 'to credit someone with something'), not just one of its parts.
-
 # Task: Generate Anki flashcards for the provided English expressions based primarily on the Context Source. The final output must be a series of text blocks, one for each expression, adhering to the specified format.
 
 # Input:
@@ -58,7 +46,7 @@ Each card must be a block of text starting with `---START-CARD---` and ending wi
 
 # Detailed Field Requirements:
 
-**Expression**: The target English word/phrase exactly as provided. **(This includes special structures like 'verb ... preposition', which must be kept as is with the '...'.)** (Sometimes, there may be cards with identical content in the "Expression" field but differing content in other fields. To avoid import failures in Anki due to duplicate "Expression" fields, please add subtle differences to identical "Expression" entries — for example, using “true” and “true.” (where the period is a minor distinction). You are not limited to using a period; you may use any inconspicuous symbol (note: it must be subtle and not something obvious like text) as a distinguishing marker. However, you must ensure that all cards with the same "Expression" content but different other fields are differentiated appropriately. Regardless of how many such cards exist under the same Expression, each one must be distinctly marked.)
+**Expression**: The target English word/phrase exactly as provided. (Sometimes, there may be cards with identical content in the "Expression" field but differing content in other fields. To avoid import failures in Anki due to duplicate "Expression" fields, please add subtle differences to identical "Expression" entries — for example, using “true” and “true.” (where the period is a minor distinction). You are not limited to using a period; you may use any inconspicuous symbol (note: it must be subtle and not something obvious like text) as a distinguishing marker. However, you must ensure that all cards with the same "Expression" content but different other fields are differentiated appropriately. Regardless of how many such cards exist under the same Expression, each one must be distinctly marked.)
 
 **IPA**: Accurate British English phonetic transcription (without slashes).
 

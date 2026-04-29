@@ -4,7 +4,7 @@ Please identify all expressions except the ones I asked you to paraphrase or tra
 The context is images I've sent you.
 
 
-Please send me all the expressions I've asked you to note down—one expression per line, with no duplicates, the sequence should align with the sequence of time; just send me pure expression.
+Please send me all the expressions I’ve asked you to record—one expression per line, with no duplicates, and in chronological order. Only include the pure expressions. Also, clean up any expressions that contain parentheses or other punctuation marks (such as “...”, “=”, etc.) by separating and formatting them neatly.
 
 
 识别出这个pdf文件里所有被紫色荧光笔标记出来的表达，一行一个，别有其他多余的内容。
