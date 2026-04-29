@@ -38,6 +38,8 @@ class PromptGeneratorTab(ttk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.placeholder_entries = {}
+        self._analyze_timer = None
+        self._generate_timer = None
 
         paned_window = ttk.PanedWindow(self, orient='horizontal')
         paned_window.pack(fill='both', expand=True, padx=5, pady=5)
@@ -46,7 +48,7 @@ class PromptGeneratorTab(ttk.Frame):
         paned_window.add(template_frame, weight=1)
         self.template_text = scrolledtext.ScrolledText(template_frame, wrap=tk.WORD, height=10, relief=tk.FLAT)
         self.template_text.pack(fill='both', expand=True, pady=(0, 5))
-        self.template_text.bind("<KeyRelease>", self.analyze_placeholders)
+        self.template_text.bind("<KeyRelease>", self.schedule_analyze_placeholders)
 
         right_pane_frame = ttk.Frame(paned_window)
         paned_window.add(right_pane_frame, weight=1)
@@ -66,18 +68,35 @@ class PromptGeneratorTab(ttk.Frame):
         ttk.Button(button_frame, text="Copy to Clipboard", command=self.copy_prompt).pack(side='left', expand=True, fill='x', padx=(0, 5))
         ttk.Button(button_frame, text="Save to File...", command=self.save_prompt).pack(side='left', expand=True, fill='x')
 
+    def schedule_analyze_placeholders(self, event=None):
+        if self._analyze_timer is not None:
+            self.after_cancel(self._analyze_timer)
+        self._analyze_timer = self.after(300, self.analyze_placeholders)
+
+    def schedule_generate_prompt(self, event=None):
+        if self._generate_timer is not None:
+            self.after_cancel(self._generate_timer)
+        self._generate_timer = self.after(300, self.generate_prompt)
+
     def analyze_placeholders(self, event=None):
         template_content = self.template_text.get("1.0", tk.END)
         placeholders = sorted(list(set(re.findall(r'\{([^{}]+)\}', template_content))))
         
+        # Cache existing values
+        old_values = {}
+        for name, entry_widget in self.placeholder_entries.items():
+            old_values[name] = entry_widget.get("1.0", tk.END).strip()
+
         for widget in self.placeholder_fields_frame.winfo_children(): widget.destroy()
         self.placeholder_entries.clear()
 
         for i, name in enumerate(placeholders):
-            ttk.Label(self.placeholder_fields_frame, text=f"{name}:").grid(row=i, column=0, sticky='w', padx=5, pady=2)
-            entry = ttk.Entry(self.placeholder_fields_frame)
+            ttk.Label(self.placeholder_fields_frame, text=f"{name}:").grid(row=i, column=0, sticky='nw', padx=5, pady=2)
+            entry = tk.Text(self.placeholder_fields_frame, height=3, wrap=tk.WORD)
             entry.grid(row=i, column=1, sticky='ew', padx=5, pady=2)
-            entry.bind("<KeyRelease>", self.generate_prompt)
+            if name in old_values:
+                entry.insert("1.0", old_values[name])
+            entry.bind("<KeyRelease>", self.schedule_generate_prompt)
             self.placeholder_entries[name] = entry
         
         self.placeholder_fields_frame.columnconfigure(1, weight=1)
@@ -86,7 +105,8 @@ class PromptGeneratorTab(ttk.Frame):
     def generate_prompt(self, event=None):
         completed_prompt = self.template_text.get("1.0", tk.END)
         for name, entry_widget in self.placeholder_entries.items():
-            completed_prompt = completed_prompt.replace(f'{{{name}}}', entry_widget.get())
+            val = entry_widget.get("1.0", tk.END).strip()
+            completed_prompt = completed_prompt.replace(f'{{{name}}}', val)
         
         self.output_text.config(state='normal')
         self.output_text.delete("1.0", tk.END)
@@ -318,28 +338,43 @@ class AnkiImporterTab(ttk.Frame):
                     batch_failed = 0
                     
                     for k, note_to_add in enumerate(notes_to_add):
-                        try:
-                            # Try adding a single note.
-                            single_result = self.invoke_anki_connect('addNote', note=note_to_add)
-                            if single_result:
-                                batch_successful += 1
-                            else:
-                                # This path is unlikely if invoke_anki_connect raises an exception on error, but is here for safety.
-                                batch_failed += 1
-                                first_field_name = self.current_note_fields[0]
-                                first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
-                                self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'")
+                        success = False
+                        error_message = ""
+                        first_field_name = self.current_note_fields[0]
 
-                        except Exception as single_error:
-                            # This is the expected path for a single note failure.
+                        # Try up to 10 times to handle duplicates
+                        for attempt in range(10):
+                            try:
+                                # Try adding a single note.
+                                single_result = self.invoke_anki_connect('addNote', note=note_to_add)
+                                if single_result:
+                                    success = True
+                                    batch_successful += 1
+                                    if attempt > 0:
+                                        self.log_status(f"  --> Resolved duplicate by appending '*': Card starting with '{note_to_add['fields'].get(first_field_name, 'N/A')}'")
+                                    break # Success, move to next note
+                                else:
+                                    # This path is unlikely if invoke_anki_connect raises an exception on error, but is here for safety.
+                                    break
+
+                            except Exception as single_error:
+                                error_message = str(single_error)
+                                if "duplicate" in error_message.lower():
+                                    # It's a duplicate, append '*' to the first field and try again
+                                    current_val = note_to_add['fields'].get(first_field_name, "")
+                                    note_to_add['fields'][first_field_name] = current_val + "*"
+                                    # Loop continues to next attempt
+                                else:
+                                    # Non-duplicate error, stop retrying
+                                    first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
+                                    self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'. Reason: {error_message}")
+                                    break
+
+                        if not success:
                             batch_failed += 1
-                            first_field_name = self.current_note_fields[0]
-                            first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
-                            # Clean up the error message from AnkiConnect if possible
-                            error_message = str(single_error)
                             if "duplicate" in error_message.lower():
-                                error_message = "Duplicate card."
-                            self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'. Reason: {error_message}")
+                                first_field_value = note_to_add['fields'].get(first_field_name, "N/A").strip()
+                                self.log_status(f"  --> SKIPPED (failed import): Card starting with '{first_field_value}'. Reason: Too many duplicate retries.")
                     
                     total_successful += batch_successful
                     total_failed += batch_failed
